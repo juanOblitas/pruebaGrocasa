@@ -9,6 +9,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Facades\JWTAuth;
+//use Carbon;
 
 class TokensController extends Controller
 {
@@ -23,27 +24,38 @@ class TokensController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'success' => false,
-                'code' => 1,
-                'message' => 'Wrong validation',
-                'errors' => $validator->errors()
+                'meta' => [
+                    'success' => false,
+                    'code' => 1,
+                    'message' => 'Wrong validation',
+                    'errors' => $validator->errors()
+                ]
             ], 422);
         }
 
         $token = JWTAuth::attempt($credentials);
 
         if ($token) {
-
+            $expirationTime=JWTAuth::factory()->getTTL();
             return response()->json([
-                'token' => $token,
-                'user' => User::where('username', $credentials['username'])->get()->first()
+                'meta' => [
+                    'success' => true,
+                    'errors' => []
+                ],
+                'data' => [
+                    'token' => $token,
+                    'minutes_to_expire' => $expirationTime
+                    //'user' => User::where('username', $credentials['username'])->get()->first()
+                ]
+                
             ], 200);
         } else {
             return response()->json([
-                'success' => false,
-                'code' => 2,
-                'message' => 'Wrong credentials',
-                'errors' => $validator->errors()], 401);
+                'meta' => [
+                    'success' => false,
+                    'errors' => ['Password incorrect for: '.$request->username]
+                ]
+            ], 401);
         }
     }
 
@@ -68,10 +80,9 @@ class TokensController extends Controller
         }
 
     }
-
+    
     public function logout()
-    {
-        //  $this->validate($request, ['token' => 'required']);
+    {        
         $token = JWTAuth::getToken();
 
         try {
@@ -86,4 +97,5 @@ class TokensController extends Controller
         }
 
     }
+
 }
