@@ -8,6 +8,7 @@ use App\Models\Candidate;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use Illuminate\Support\Facades\Redis;
 //use DB;
 
 class CandidateController extends Controller
@@ -90,7 +91,7 @@ class CandidateController extends Controller
 		return response()->json([
 			'meta' => [
 				'success' => false,
-				'errors' => "Token expired"
+				'errors' => ["Token expired"]
 			]
 		],401);
     }
@@ -117,7 +118,7 @@ class CandidateController extends Controller
     	return response()->json([
 			'meta' => [
 				'success' => false,
-				'errors' => "Token expired"
+				'errors' => ["Token expired"]
 			]
 		],401);
     }
@@ -159,7 +160,7 @@ class CandidateController extends Controller
 	    		return response()->json([
 					'meta' => [
 						'success' => false,
-						'errors' => "Not Authorized"
+						'errors' => ["Not Authorized"]
 					]
 				],401);
 	    	}
@@ -167,7 +168,7 @@ class CandidateController extends Controller
     	return response()->json([
 			'meta' => [
 				'success' => false,
-				'errors' => "Token expired"
+				'errors' => ["Token expired"]
 			]
 		],401);
     	

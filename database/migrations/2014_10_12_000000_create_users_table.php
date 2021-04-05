@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();//vamos a ver que crea
+            $table->timestamp('last_login', $precision = 0)->nullable();
             $table->boolean('is_active')->default(0)->change();
             $table->enum('role', ['manager', 'agent']);
         });

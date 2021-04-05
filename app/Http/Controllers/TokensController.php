@@ -9,7 +9,8 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Facades\JWTAuth;
-//use Carbon;
+use Carbon;
+use DB;
 
 class TokensController extends Controller
 {
@@ -37,6 +38,11 @@ class TokensController extends Controller
 
         if ($token) {
             $expirationTime=JWTAuth::factory()->getTTL();
+            $myTime = Carbon\Carbon::now();
+            $userUpdateFieldLastLogin=User::where('username',$request->username)->get()->first();
+            DB::table('users')
+                ->where('username', $request->username)
+                ->update(['last_login' => $myTime->toDateTimeString()]);
             return response()->json([
                 'meta' => [
                     'success' => true,
@@ -44,8 +50,7 @@ class TokensController extends Controller
                 ],
                 'data' => [
                     'token' => $token,
-                    'minutes_to_expire' => $expirationTime
-                    //'user' => User::where('username', $credentials['username'])->get()->first()
+                    'minutes_to_expire' => $expirationTime,
                 ]
                 
             ], 200);

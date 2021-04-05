@@ -33,6 +33,7 @@ class UserFactory extends Factory
             'password' => $password,
             'remember_token' => Str::random(10),
             'is_active' => $this->faker->randomElement([0, 1]), //Debido a que tiene un valor por defecto en db no es necesario en los faker
+            'last_login' => null,
             'role' => $this->faker->randomElement(['manager', 'agent']),
         ];
     }
