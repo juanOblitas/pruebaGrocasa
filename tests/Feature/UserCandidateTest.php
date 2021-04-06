@@ -118,13 +118,22 @@ class UserCandidateTest extends TestCase
         $showCandidates->assertStatus(200);
 
         //show a specify candidate
-        $myCandidate = DB::table('candidates')
-                ->where('users', 'users._id', '=', 'candidates.owner')
-                ->get()->first();
+        $myCandidate = Candidate::where('owner',$user->id)->get()->first();
         if($myCandidate!=null){
             $showCandidate = $this -> actingAs($user)->get('/api/v1/candidate/'.$myCandidate->id, $header);
             $showCandidate->assertStatus(200);
         }
+        //not can see a candidate that not is owner
+        /*
+        $myCandidateRand = DB::table('candidates')
+                ->join('users', 'users._id', '=', 'candidates.owner')
+                ->where('users', 'users._id', '<>', $user->id)
+                ->get()->first();
+
+        if($myCandidateRand!=null){
+            $showCandidate = $this -> actingAs($user)->get('/api/v1/candidate/'.$myCandidateRand->id, $header);
+            $showCandidate->assertStatus(401);
+        }*/
 
     }
 
